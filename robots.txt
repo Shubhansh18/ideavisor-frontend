@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ideavisor.cotravels.in/sitemap.xml
