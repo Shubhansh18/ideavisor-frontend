@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IdeaVisor - AI-Powered Startup Validation Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'slate': {
+                            750: '#334155',
+                            850: '#1e293b',
+                            925: '#0f172a',
+                            950: '#020617'
+                        },
+                        'primary': {
+                            50: '#f0f9ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8'
+                        },
+                        'accent': {
+                            500: '#06b6d4',
+                            600: '#0891b2'
+                        },
+                        'success': {
+                            500: '#10b981',
+                            600: '#059669'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
+                        'grid-flow': 'gridFlow 15s linear infinite'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { font-family: 'Inter', sans-serif; }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            overflow-x: hidden;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+            to { box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 0 30px rgba(59, 130, 246, 0.3); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulseSoft {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 0.9; }
+        }
+        
+        @keyframes gridFlow {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-60px, -60px); }
+        }
+        
+        .bg-mesh {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 25%, #1e293b 50%, #0f172a 75%, #020617 100%);
+            position: relative;
+        }
+        
+        .bg-mesh::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridFlow 15s linear infinite;
+        }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(59, 130, 246, 0.2);
+            box-shadow: 
+                0 8px 40px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(59, 130, 246, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 50%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .input-field {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background: rgba(15, 23, 42, 0.9);
+        }
+        
+        .loading-ring {
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .feature-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 50%, #10b981 100%);
+            transition: width 0.5s ease;
+        }
+        
+        .report-metric {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .report-metric:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-mesh text-white min-h-screen" x-data="{
+    currentStep: 'landing',
+    currentQuestion: 1,
+    totalQuestions: 5,
+    loadingProgress: 0,
+    isMenuOpen: false,
+    reportId: '',
+    reportData: null,
+    clarificationMessage: '',
+    validationError: '',
+    formData: {
+        idea: '',
+        customer: '',
+        problem: '',
+        solution: '',
+        background: '',
+        resumeFile: null
+    },
+    
+    loadingSteps: [
+        'Analyzing your startup concept...',
+        'Researching market opportunities...',
+        'Evaluating competitive landscape...',
+        'Generating strategic insights...',
+        'Finalizing your report...'
+    ],
+    
+    currentLoadingStep: 0,
+    apiBaseUrl: 'http://127.0.0.1:8000/api/v1',
+    
+    scrollToSection(id) {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        this.isMenuOpen = false;
+    },
+    
+    nextQuestion() {
+        if (!this.validateCurrentQuestion()) {
+            setTimeout(() => {
+                document.querySelector('#validation-error-display')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        } else {
+            if (this.currentQuestion < this.totalQuestions) {
+                this.currentQuestion++;
+            }
+        }
+    },
+    
+    prevQuestion() {
+        if (this.currentQuestion > 1) {
+            this.currentQuestion--;
+        }
+    },
+    
+    validateCurrentQuestion() {
+        const current = this.currentQuestion;
+        this.validationError = ''; 
+
+        if (current === 1 && this.formData.idea.trim().length < 10) {
+            this.validationError = 'Your startup idea description must be at least 10 characters long.';
+            return false;
+        }
+        if (current === 2 && this.formData.customer.trim().length < 10) {
+            this.validationError = 'The target customer description must be at least 10 characters long.';
+            return false;
+        }
+        if (current === 3 && this.formData.problem.trim().length < 10) {
+            this.validationError = 'The problem description must be at least 10 characters long.';
+            return false;
+        }
+        if (current === 4 && this.formData.solution.trim().length < 10) {
+            this.validationError = 'The solution description must be at least 10 characters long.';
+            return false;
+        }
+        if (current === 5 && this.formData.background.trim().length < 10 && !this.formData.resumeFile) {
+            this.validationError = 'Your background description must be at least 10 characters long, or you must upload a resume.';
+            return false;
+        }
+        return true;
+    },
+
+    async submitForm() {
+        if (this.validateCurrentQuestion()) {
+            this.currentStep = 'loading';
+            this.loadingProgress = 0;
+            this.currentLoadingStep = 0;
+            
+            try {
+                await this.generateReport();
+            } catch (error) {
+                console.error('Error generating report:', error);
+                alert('An error occurred: ' + error.message);
+                this.currentStep = 'form';
+            }
+        } else {
+            setTimeout(() => {
+                document.querySelector('#validation-error-display')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    },
+    
+    async generateReport() {
+        try {
+            // Start the loading animation
+            this.startLoadingAnimation();
+
+            const data = new FormData();
+            data.append('idea', this.formData.idea);
+            data.append('customer', this.formData.customer);
+            data.append('problem', this.formData.problem);
+            data.append('solution', this.formData.solution);
+            data.append('background', this.formData.background);
+            if (this.formData.resumeFile) {
+                data.append('resume_file', this.formData.resumeFile);
+            }
+            
+            // Submit data to backend
+            const response = await fetch(`${this.apiBaseUrl}/analyze`, {
+                method: 'POST',
+                body: data
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ detail: 'Unknown server error' }));
+                throw new Error(errorData.detail || 'Failed to submit validation request');
+            }
+            
+            const result = await response.json();
+
+            if (result.status === 'clarification_needed') {
+                this.clarificationMessage = result.message || 'Your input was unclear. Please provide more details.';
+                this.currentStep = 'clarification';
+                return; // Stop execution and do not poll
+            }
+            
+            this.reportId = result.report_id;
+            
+            // Poll for report completion
+            await this.pollReportStatus();
+            
+        } catch (error) {
+            console.error('Report generation error:', error);
+            throw error;
+        }
+    },
+    
+    async pollReportStatus() {
+        const maxAttempts = 30; // 30 attempts with 2-second intervals = 1 minute max
+        let attempts = 0;
+        
+        while (attempts < maxAttempts) {
+            try {
+                const response = await fetch(`${this.apiBaseUrl}/report/${this.reportId}`);
+                const data = await response.json();
+                
+                if (data.status === 'completed') {
+                    this.reportData = data;
+                    this.loadingProgress = 100;
+                    setTimeout(() => {
+                        this.currentStep = 'report';
+                    }, 1000);
+                    return;
+                } else if (data.status === 'failed') {
+                    throw new Error(data.error || 'Report generation failed');
+                } else if (data.status === 'clarification_needed') {
+                    this.clarificationMessage = data.message || 'Your input was unclear. Please provide more details.';
+                    this.currentStep = 'clarification';
+                    return; // Stop polling
+                }
+                
+                // Continue polling
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                attempts++;
+                
+            } catch (error) {
+                console.error('Polling error:', error);
+                throw error;
+            }
+        }
+        
+        throw new Error('Report generation timeout');
+    },
+    
+    startLoadingAnimation() {
+        const interval = setInterval(() => {
+            this.loadingProgress += Math.random() * 8 + 2;
+            
+            if (this.loadingProgress >= 95) {
+                this.loadingProgress = 95; // Stop at 95% until actual completion
+                clearInterval(interval);
+            } else {
+                // Update loading step based on progress
+                const step = Math.floor((this.loadingProgress / 100) * this.loadingSteps.length);
+                this.currentLoadingStep = Math.min(step, this.loadingSteps.length - 1);
+            }
+        }, 800);
+    },
+    
+    handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (file && file.type === 'application/pdf') {
+            this.formData.resumeFile = file;
+            // Show file name feedback
+            const label = event.target.nextElementSibling;
+            if (label) {
+                label.textContent = `Selected: ${file.name}`;
+                label.className += ' text-success-500';
+            }
+        }
+    },
+    
+    downloadReport() {
+        // Create downloadable report content
+        const reportContent = this.generateReportPDF();
+        const blob = new Blob([reportContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `IdeaVisor-Report-${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        // UI feedback
+        const originalText = event.target.textContent;
+        event.target.textContent = 'Downloading...';
+        event.target.disabled = true;
+        
+        setTimeout(() => {
+            event.target.textContent = 'Downloaded Successfully!';
+            setTimeout(() => {
+                event.target.textContent = originalText;
+                event.target.disabled = false;
+            }, 2000);
+        }, 1500);
+    },
+    
+    generateReportPDF() {
+        if (!this.reportData || !this.reportData.analysis) {
+            return 'Report data not available';
+        }
+        
+        const analysis = this.reportData.analysis;
+        const date = new Date().toLocaleDateString();
+        
+        return `
+IdeaVisor - Startup Validation Report
+Generated: ${date}
+
+=== EXECUTIVE SUMMARY ===
+Startup Idea: ${this.formData.idea}
+Viability Score: ${analysis.viability_score}/10
+Market Size: ${analysis.market_size}
+Competition Level: ${analysis.competition_level}
+Time to Market: ${analysis.time_to_market}
+
+=== MARKET ANALYSIS ===
+TAM (Total Addressable Market): ${analysis.market_analysis?.TAM || 'N/A'}
+SAM (Serviceable Addressable Market): ${analysis.market_analysis?.SAM || 'N/A'}
+SOM (Serviceable Obtainable Market): ${analysis.market_analysis?.SOM || 'N/A'}
+Growth Rate: ${analysis.market_analysis?.growth_rate || 'N/A'}
+
+Key Market Trends:
+${analysis.market_analysis?.key_trends?.map(trend => `• ${trend}`).join('\n') || 'N/A'}
+
+=== COMPETITIVE LANDSCAPE ===
+${analysis.competitive_landscape?.direct_competitors?.map(comp => 
+    `• ${comp.name}: ${comp.market_share} market share - ${comp.weakness}`
+).join('\n') || 'N/A'}
+
+Competitive Advantage: ${analysis.competitive_landscape?.competitive_advantage || 'N/A'}
+Market Gap: ${analysis.competitive_landscape?.market_gap || 'N/A'}
+
+=== RISK ASSESSMENT ===
+High Risks:
+${analysis.risk_assessment?.high_risks?.map(risk => `• ${risk}`).join('\n') || 'N/A'}
+
+Medium Risks:
+${analysis.risk_assessment?.medium_risks?.map(risk => `• ${risk}`).join('\n') || 'N/A'}
+
+Low Risks:
+${analysis.risk_assessment?.low_risks?.map(risk => `• ${risk}`).join('\n') || 'N/A'}
+
+=== FOUNDER-MARKET FIT ===
+Score: ${analysis.founder_market_fit?.score || 'N/A'}/10
+
+Strengths:
+${analysis.founder_market_fit?.strengths?.map(strength => `• ${strength}`).join('\n') || 'N/A'}
+
+Areas for Improvement:
+${analysis.founder_market_fit?.gaps?.map(gap => `• ${gap}`).join('\n') || 'N/A'}
+
+Recommendations:
+${analysis.founder_market_fit?.recommendations?.map(rec => `• ${rec}`).join('\n') || 'N/A'}
+
+=== STRATEGIC RECOMMENDATIONS ===
+MVP Strategy: ${analysis.recommendations?.mvp_strategy || 'N/A'}
+Funding Needs: ${analysis.recommendations?.funding_needs || 'N/A'}
+
+Key Success Metrics:
+${analysis.recommendations?.success_metrics?.map(metric => `• ${metric}`).join('\n') || 'N/A'}
+
+=== FINANCIAL PROJECTIONS ===
+Revenue Model: ${analysis.financial_projections?.revenue_model || 'N/A'}
+Average Booking Value: ${analysis.financial_projections?.avg_booking_value || 'N/A'}
+Projected MRR (Year 1): ${analysis.financial_projections?.projected_mrr_y1 || 'N/A'}
+Customer Acquisition Cost: ${analysis.financial_projections?.customer_acquisition_cost || 'N/A'}
+Customer Lifetime Value: ${analysis.financial_projections?.customer_lifetime_value || 'N/A'}
+Break-even Timeline: ${analysis.financial_projections?.break_even_timeline || 'N/A'}
+
+=== ACTION PLAN ===
+Phase 1 (${analysis.action_plan?.phase_1?.timeline || 'N/A'}): ${analysis.action_plan?.phase_1?.title || 'N/A'}
+${analysis.action_plan?.phase_1?.tasks?.map(task => `• ${task}`).join('\n') || 'N/A'}
+
+Phase 2 (${analysis.action_plan?.phase_2?.timeline || 'N/A'}): ${analysis.action_plan?.phase_2?.title || 'N/A'}
+${analysis.action_plan?.phase_2?.tasks?.map(task => `• ${task}`).join('\n') || 'N/A'}
+
+Phase 3 (${analysis.action_plan?.phase_3?.timeline || 'N/A'}): ${analysis.action_plan?.phase_3?.title || 'N/A'}
+${analysis.action_plan?.phase_3?.tasks?.map(task => `• ${task}`).join('\n') || 'N/A'}
+
+=== Y COMBINATOR CRITERIA ASSESSMENT ===
+Problem Clarity: ${analysis.yc_criteria_assessment?.problem_clarity || 'N/A'}/10
+Solution Fit: ${analysis.yc_criteria_assessment?.solution_fit || 'N/A'}/10
+Market Size: ${analysis.yc_criteria_assessment?.market_size || 'N/A'}/10
+Founder Strength: ${analysis.yc_criteria_assessment?.founder_strength || 'N/A'}/10
+Traction Potential: ${analysis.yc_criteria_assessment?.traction_potential || 'N/A'}/10
+Overall YC Score: ${analysis.yc_criteria_assessment?.overall_score || 'N/A'}/10
+
+Notes: ${analysis.yc_criteria_assessment?.notes || 'N/A'}
+
+---
+Report generated by IdeaVisor - AI-Powered Startup Validation Platform
+Visit: http://127.0.0.1:8000
+        `;
+    },
+    
+    startNewValidation() {
+        this.currentStep = 'form';
+        this.currentQuestion = 1;
+        this.reportData = null;
+        this.reportId = '';
+        this.loadingProgress = 0;
+        this.formData = {
+            idea: '', customer: '', problem: '', solution: '', background: '', resumeFile: null
+        };
+    },
+    
+    goHome() {
+        this.currentStep = 'landing';
+        this.currentQuestion = 1;
+        this.reportData = null;
+        this.reportId = '';
+        this.loadingProgress = 0;
+        this.formData = {
+            idea: '', customer: '', problem: '', solution: '', background: '', resumeFile: null
+        };
+    }
+}">
+
+    <!-- Grid Pattern Background -->
+    <div class="fixed inset-0 grid-pattern opacity-20 pointer-events-none"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 z-50 glass-card border-b border-slate-700/50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" @click="goHome()">
+                    <div class="relative">
+                        <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-accent-500 rounded-xl animate-glow flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gradient">IdeaVisor</h1>
+                        <p class="text-xs text-slate-400 -mt-0.5">AI Validation Platform</p>
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" @click.prevent="scrollToSection('features')" class="nav-link text-slate-300 hover:text-white">Features</a>
+                    <a href="#how-it-works" @click.prevent="scrollToSection('how-it-works')" class="nav-link text-slate-300 hover:text-white">How it Works</a>
+                    <a href="#pricing" @click.prevent="scrollToSection('pricing')" class="nav-link text-slate-300 hover:text-white">Pricing</a>
+                    <button @click="currentStep = 'form'" class="btn-primary px-6 py-2 rounded-lg font-medium">
+                        Get Started
+                    </button>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button @click="isMenuOpen = !isMenuOpen" class="md:hidden p-2 rounded-lg glass-card">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x-show="!isMenuOpen" d="M4 6h16M4 12h16M4 18h16"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x-show="isMenuOpen" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div x-show="isMenuOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="md:hidden mt-4 pb-4 border-t border-slate-700">
+                <div class="flex flex-col space-y-4 pt-4">
+                    <a href="#features" @click.prevent="scrollToSection('features')" class="text-slate-300 hover:text-white">Features</a>
+                    <a href="#how-it-works" @click.prevent="scrollToSection('how-it-works')" class="text-slate-300 hover:text-white">How it Works</a>
+                    <a href="#pricing" @click.prevent="scrollToSection('pricing')" class="text-slate-300 hover:text-white">Pricing</a>
+                    <button @click="currentStep = 'form'" class="btn-primary px-6 py-2 rounded-lg font-medium text-left">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20">
+        
+        <!-- Landing Section -->
+        <section x-show="currentStep === 'landing'" class="min-h-screen">
+            
+            <!-- Hero Section -->
+            <div id="hero" class="min-h-screen flex items-center justify-center px-6 py-20">
+                <div class="max-w-6xl mx-auto text-center">
+                    
+                    <!-- Animated Icon -->
+                    <div class="mb-12 animate-float">
+                        <div class="w-32 h-32 mx-auto relative">
+                            <div class="absolute inset-0 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full opacity-20 animate-pulse-soft"></div>
+                            <div class="absolute inset-2 bg-gradient-to-r from-primary-600 to-accent-600 rounded-full animate-glow flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Headline -->
+                    <h1 class="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+                        <span class="text-gradient">Validate Your Startup</span><br>
+                        <span class="text-white">Before You Build</span>
+                    </h1>
+                    
+                    <!-- Subheadline -->
+                    <p class="text-xl md:text-2xl text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+                        Get comprehensive AI-powered analysis using Lean Canvas, TAM-SAM-SOM framework, and YC criteria. 
+                        Discover market viability and founder-market fit in minutes.
+                    </p>
+                    
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center gap-6 mb-16">
+                        <button @click="currentStep = 'form'" class="btn-primary px-8 py-4 rounded-xl text-lg font-semibold">
+                            Start Free Validation
+                        </button>
+                        <button @click="scrollToSection('how-it-works')" class="glass-card px-8 py-4 rounded-xl text-lg font-semibold hover:bg-slate-700/50 transition-all">
+                            See How It Works
+                        </button>
+                    </div>
+                    
+                    <!-- Trust Indicators -->
+                    <div class="flex flex-wrap justify-center items-center gap-8 text-sm text-slate-400">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-success-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>AI-Powered Analysis</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-success-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>YC Framework Assessment</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-success-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>60-second analysis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Features Section -->
+            <section id="features" class="py-20 px-6">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-gradient mb-6">Comprehensive AI Analysis</h2>
+                        <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                            Advanced frameworks and methodologies used by top accelerators and investors
+                        </p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="feature-card glass-card p-8 rounded-2xl transition-all duration-300">
+                            <div class="feature-icon w-16 h-16 bg-gradient-to-r from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mb-6">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-semibold mb-4">TAM-SAM-SOM Analysis</h3>
+                            <p class="text-slate-300 leading-relaxed">Comprehensive market sizing using Total Addressable Market, Serviceable Addressable Market, and Serviceable Obtainable Market frameworks.</p>
+                        </div>
+                        
+                        <div class="feature-card glass-card p-8 rounded-2xl transition-all duration-300">
+                            <div class="feature-icon w-16 h-16 bg-gradient-to-r from-accent-500 to-accent-600 rounded-2xl flex items-center justify-center mb-6">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-semibold mb-4">YC Criteria Assessment</h3>
+                            <p class="text-slate-300 leading-relaxed">Evaluation based on Y Combinator's proven startup selection criteria: problem clarity, solution fit, market size, and founder strength.</p>
+                        </div>
+                        
+                        <div class="feature-card glass-card p-8 rounded-2xl transition-all duration-300">
+                            <div class="feature-icon w-16 h-16 bg-gradient-to-r from-success-500 to-success-600 rounded-2xl flex items-center justify-center mb-6">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-semibold mb-4">Founder-Market Fit</h3>
+                            <p class="text-slate-300 leading-relaxed">Analysis of your background, skills, and experience alignment with the target market and business opportunity.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- How It Works Section -->
+            <section id="how-it-works" class="py-20 px-6 bg-slate-925/50">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-gradient mb-6">How It Works</h2>
+                        <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                            Simple 3-step process to get comprehensive startup validation
+                        </p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-12">
+                        <div class="text-center">
+                            <div class="w-20 h-20 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">1</div>
+                            <h3 class="text-xl font-semibold mb-4">Answer 5 Questions</h3>
+                            <p class="text-slate-300">Share your startup idea, target market, problem, solution, and background through our guided questionnaire.</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="w-20 h-20 bg-gradient-to-r from-accent-500 to-accent-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">2</div>
+                            <h3 class="text-xl font-semibold mb-4">AI Analysis</h3>
+                            <p class="text-slate-300">Our AI analyzes your idea using proven frameworks: Lean Canvas, TAM-SAM-SOM, YC criteria, and founder-market fit.</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="w-20 h-20 bg-gradient-to-r from-success-500 to-success-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">3</div>
+                            <h3 class="text-xl font-semibold mb-4">Get Your Report</h3>
+                            <p class="text-slate-300">Receive a comprehensive validation report with viability score, market analysis, and actionable recommendations.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Pricing Section -->
+            <section id="pricing" class="py-20 px-6">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-gradient mb-6">Simple Pricing</h2>
+                        <p class="text-xl text-slate-300">
+                            Get started with your first validation report for free
+                        </p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="glass-card p-8 rounded-2xl">
+                            <h3 class="text-2xl font-semibold mb-4">Free Report</h3>
+                            <div class="text-4xl font-bold text-gradient mb-6">$0</div>
+                            <ul class="space-y-3 mb-8">
+                                <li class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-success-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Complete AI analysis</span>
+                                </li>
+                                <li class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-success-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Market & competitor insights</span>
+                                </li>
+                                <li class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-success-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>PDF download</span>
+                                </li>
+                            </ul>
+                            <button @click="currentStep = 'form'" class="w-full btn-primary py-3 rounded-lg font-semibold">
+                                Get Free Report
+                            </button>
+                        </div>
+                    
+                        <div class="glass-card p-8 rounded-2xl border-primary-500/30">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-2xl font-semibold">Pro Analysis</h3>
+                                <span class="text-xs bg-primary-500 px-2 py-1 rounded-full">Coming Soon</span>
+                            </div>
+                            <div class="text-4xl font-bold text-gradient mb-6">$29</div>
+                            <ul class="space-y-3 mb-8">
+                                <li class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-success-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Everything in Free</span>
+                                </li>
+                                <li class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-success-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Financial projections</span>
+                                </li>
+                                <li class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-success-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Go-to-market strategy</span>
+                                </li>
+                                <li class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-success-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Funding recommendations</span>
+                                </li>
+                            </ul>
+                            <button disabled class="w-full bg-slate-700 text-slate-400 py-3 rounded-lg font-semibold cursor-not-allowed">
+                                Coming Soon
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- Form Section -->
+        <section x-show="currentStep === 'form'" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+            <div class="min-h-screen py-20 px-6">
+                <div class="max-w-4xl mx-auto">
+                    
+                    <!-- Header -->
+                    <div class="text-center mb-16">
+                        <h1 class="text-4xl md:text-5xl font-bold text-gradient mb-6">Validate Your Startup Idea</h1>
+                        <p class="text-xl text-slate-300">Answer 5 questions and get your AI-powered validation report</p>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mb-12">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-lg font-semibold">Progress</span>
+                            <span class="text-lg font-semibold text-gradient" x-text="`${Math.round((currentQuestion / totalQuestions) * 100)}%`"></span>
+                        </div>
+                        
+                        <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden">
+                            <div class="progress-bar h-full rounded-full transition-all duration-500"
+                                 :style="`width: ${(currentQuestion / totalQuestions) * 100}%`"></div>
+                        </div>
+                        
+                        <div class="flex justify-between mt-4">
+                            <template x-for="step in totalQuestions" :key="step">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-4 h-4 rounded-full transition-all duration-300"
+                                         :class="step <= currentQuestion ? 'bg-primary-500' : 'bg-slate-600'"></div>
+                                    <span class="text-xs mt-1 text-slate-400" x-text="`${step}`"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Form -->
+                    <form @submit.prevent="submitForm" class="space-y-8">
+                        
+                        <!-- Question 1: Startup Idea -->
+                        <div x-show="currentQuestion >= 1" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                             class="glass-card p-8 rounded-2xl">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center mr-4">
+                                    <span class="text-white font-bold text-lg">1</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-semibold text-white">What's your startup idea?</h3>
+                                    <p class="text-slate-400 mt-1">Describe your concept in 1-2 clear sentences</p>
+                                </div>
+                            </div>
+                            
+                            <textarea x-model="formData.idea" 
+                                    @input="validationError = ''"
+                                    rows="4" 
+                                    placeholder="Example: A mobile app that connects dog owners with vetted pet sitters for on-demand, short-term care services in urban areas."
+                                    class="w-full input-field rounded-xl px-4 py-3 text-white placeholder-slate-500 resize-none"
+                                    maxlength="1000"></textarea>
+                            <div class="text-right text-sm text-slate-500 mt-2" x-text="`${formData.idea.length}/1000`"></div>
+                        </div>
+
+                        <!-- Question 2: Target Customer -->
+                        <div x-show="currentQuestion >= 2" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                             class="glass-card p-8 rounded-2xl">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 bg-gradient-to-r from-accent-500 to-accent-600 rounded-xl flex items-center justify-center mr-4">
+                                    <span class="text-white font-bold text-lg">2</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-semibold text-white">Who is your target customer?</h3>
+                                    <p class="text-slate-400 mt-1">Be specific about demographics, profession, or characteristics</p>
+                                </div>
+                            </div>
+                            
+                            <input type="text" 
+                                   x-model="formData.customer"
+                                   @input="validationError = ''"
+                                   placeholder="Example: Urban professionals aged 25-40 who own dogs but work long hours and occasionally need flexible pet care"
+                                   class="w-full input-field rounded-xl px-4 py-3 text-white placeholder-slate-500"
+                                   maxlength="500">
+                            <div class="text-right text-sm text-slate-500 mt-2" x-text="`${formData.customer.length}/500`"></div>
+                        </div>
+
+                        <!-- Question 3: Problem -->
+                        <div x-show="currentQuestion >= 3" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                             class="glass-card p-8 rounded-2xl">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 bg-gradient-to-r from-success-500 to-success-600 rounded-xl flex items-center justify-center mr-4">
+                                    <span class="text-white font-bold text-lg">3</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-semibold text-white">What problem are you solving?</h3>
+                                    <p class="text-slate-400 mt-1">Describe the specific pain point your customers face</p>
+                                </div>
+                            </div>
+                            
+                            <textarea x-model="formData.problem" 
+                                    @input="validationError = ''"
+                                    rows="4" 
+                                    placeholder="Example: Pet owners struggle to find reliable, last-minute pet care when they need to work late, travel unexpectedly, or attend events. Existing services require 24-48 hour advance booking."
+                                    class="w-full input-field rounded-xl px-4 py-3 text-white placeholder-slate-500 resize-none"
+                                    maxlength="1000"></textarea>
+                            <div class="text-right text-sm text-slate-500 mt-2" x-text="`${formData.problem.length}/1000`"></div>
+                        </div>
+
+                        <!-- Question 4: Solution -->
+                        <div x-show="currentQuestion >= 4" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                             class="glass-card p-8 rounded-2xl">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
+                                    <span class="text-white font-bold text-lg">4</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-semibold text-white">How do you plan to solve this?</h3>
+                                    <p class="text-slate-400 mt-1">Briefly describe your solution or product approach</p>
+                                </div>
+                            </div>
+                            
+                            <textarea x-model="formData.solution" 
+                                    @input="validationError = ''"
+                                    rows="4" 
+                                    placeholder="Example: A platform with verified, background-checked pet sitters available for same-day bookings. Users can request care within 2 hours, track their pet via updates, and pay through the app."
+                                    class="w-full input-field rounded-xl px-4 py-3 text-white placeholder-slate-500 resize-none"
+                                    maxlength="1000"></textarea>
+                            <div class="text-right text-sm text-slate-500 mt-2" x-text="`${formData.solution.length}/1000`"></div>
+                        </div>
+
+                        <!-- Question 5: Background -->
+                        <div x-show="currentQuestion >= 5" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                             class="glass-card p-8 rounded-2xl">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
+                                    <span class="text-white font-bold text-lg">5</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-semibold text-white">Tell us about your background</h3>
+                                    <p class="text-slate-400 mt-1">Describe your relevant experience for founder-market fit analysis</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <!-- File Upload -->
+                                <div class="border-2 border-dashed border-slate-600 rounded-xl p-8 text-center hover:border-primary-500 transition-colors">
+                                    <input type="file" id="resume" accept=".pdf" class="hidden" @change="handleFileUpload">
+                                    <label for="resume" class="cursor-pointer block">
+                                        <svg class="w-12 h-12 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                        </svg>
+                                        <p class="text-slate-300 font-medium">Upload Resume/LinkedIn Profile Pdf</p>
+                                        <p class="text-sm text-slate-500 mt-1">Click to browse or drag and drop</p>
+                                    </label>
+                                </div>
+                                
+                                <div class="text-center text-slate-400 font-medium">OR</div>
+                                
+                                <!-- Text Description -->
+                                <textarea x-model="formData.background" 
+                                        @input="validationError = ''"
+                                        rows="4" 
+                                        placeholder="Example: Software engineer with 5 years experience at tech startups. Previously built and launched 2 mobile apps with 50K+ downloads. Strong background in product development and user experience design."
+                                        class="w-full input-field rounded-xl px-4 py-3 text-white placeholder-slate-500 resize-none"
+                                        maxlength="5000"></textarea>
+                                <div class="text-right text-sm text-slate-500 mt-2" x-text="`${formData.background.length}/5000`"></div>
+                            </div>
+
+                        </div>
+
+                        <!-- Validation Error Display -->
+                        <div id="validation-error-display" x-show="validationError" x-transition class="text-red-400 bg-red-900/50 border border-red-500/50 p-4 rounded-lg" x-text="validationError">
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="flex justify-between items-center pt-8">
+                            <button type="button" 
+                                    @click="prevQuestion()"
+                                    x-show="currentQuestion > 1"
+                                    class="flex items-center space-x-2 px-6 py-3 glass-card rounded-lg hover:bg-slate-700/50 transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                                <span>Previous</span>
+                            </button>
+                            
+                            <div class="flex-grow"></div>
+
+                            <div class="flex space-x-4">
+                                <button type="button" 
+                                        @click="nextQuestion()"
+                                        x-show="currentQuestion < totalQuestions"
+                                        class="btn-primary px-8 py-3 rounded-lg font-semibold">
+                                    Next Question
+                                </button>
+                                
+                                <button type="submit" 
+                                        x-show="currentQuestion === totalQuestions"
+                                        class="bg-gradient-to-r from-success-500 to-success-600 px-8 py-3 rounded-lg font-semibold hover:from-success-600 hover:to-success-700 transition-all">
+                                    Generate AI Report
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Section -->
+        <section x-show="currentStep === 'loading'" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+            <div class="min-h-screen flex items-center justify-center px-6">
+                <div class="max-w-2xl mx-auto text-center">
+                    <div class="glass-card p-12 rounded-3xl">
+                        
+                        <!-- Loading Animation -->
+                        <div class="mb-8">
+                            <div class="loading-ring mx-auto mb-6"></div>
+                            <div class="w-16 h-16 bg-gradient-to-r from-primary-500 to-accent-500 rounded-2xl mx-auto animate-pulse flex items-center justify-center -mt-20">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Progress Info -->
+                        <h2 class="text-3xl font-bold text-gradient mb-4">AI Analysis in Progress</h2>
+                        <p class="text-xl text-slate-300 mb-8" x-text="loadingSteps[currentLoadingStep]"></p>
+                        
+                        <!-- Progress Bar -->
+                        <div class="mb-8">
+                            <div class="w-full bg-slate-800 rounded-full h-2">
+                                <div class="progress-bar h-2 rounded-full transition-all duration-300"
+                                     :style="`width: ${loadingProgress}%`"></div>
+                            </div>
+                            <div class="text-right text-sm text-slate-400 mt-2" x-text="`${Math.round(loadingProgress)}%`"></div>
+                        </div>
+                        
+                        <!-- Loading Steps -->
+                        <div class="space-y-3 text-left max-w-sm mx-auto">
+                            <template x-for="(step, index) in loadingSteps" :key="index">
+                                <div class="flex items-center space-x-3 transition-all duration-300"
+                                     :class="index <= currentLoadingStep ? 'text-success-500' : 'text-slate-500'">
+                                    <div class="w-2 h-2 rounded-full"
+                                         :class="index <= currentLoadingStep ? 'bg-success-500 animate-pulse' : 'bg-slate-600'"></div>
+                                    <span class="text-sm" x-text="step"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clarification Section -->
+        <section x-show="currentStep === 'clarification'" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+            <div class="min-h-screen flex items-center justify-center px-6">
+                <div class="max-w-2xl mx-auto text-center">
+                    <div class="glass-card p-12 rounded-3xl">
+                        <!-- Icon -->
+                        <div class="mb-8">
+                            <svg class="w-16 h-16 mx-auto text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.546-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gradient mb-4">Clarification Needed</h2>
+                        <p class="text-xl text-slate-300 mb-8" x-text="clarificationMessage"></p>
+                        <button @click="currentStep = 'form'" class="btn-primary px-8 py-3 rounded-xl font-semibold">
+                            Revise My Input
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Report Section -->
+        <section x-show="currentStep === 'report'" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+            <div class="py-20 px-6">
+                <div class="max-w-6xl mx-auto">
+                    
+                    <!-- Report Header -->
+                    <div class="text-center mb-16">
+                        <h1 class="text-4xl md:text-5xl font-bold text-gradient mb-6">Your Startup Validation Report</h1>
+                        <p class="text-xl text-slate-300 mb-8">Comprehensive AI-powered analysis using proven frameworks</p>
+                        
+                        <div class="flex justify-center gap-4">
+                            <button @click="downloadReport()" class="btn-primary px-8 py-3 rounded-xl font-semibold flex items-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>Download Report</span>
+                            </button>
+                            
+                            <button @click="startNewValidation()" class="glass-card px-8 py-3 rounded-xl font-semibold hover:bg-slate-700/50 transition-all">
+                                Validate Another Idea
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Key Metrics -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16" x-show="reportData && reportData.analysis">
+                        <div class="report-metric p-6 rounded-2xl text-center">
+                            <div class="text-3xl font-bold text-success-500 mb-2" x-text="reportData?.analysis?.viability_score + '/10' || '8.2/10'"></div>
+                            <div class="text-sm text-slate-400">Viability Score</div>
+                        </div>
+                        <div class="report-metric p-6 rounded-2xl text-center">
+                            <div class="text-3xl font-bold text-primary-500 mb-2" x-text="reportData?.analysis?.market_size || '$2.1B'"></div>
+                            <div class="text-sm text-slate-400">Market Size</div>
+                        </div>
+                        <div class="report-metric p-6 rounded-2xl text-center">
+                            <div class="text-3xl font-bold text-accent-500 mb-2" x-text="reportData?.analysis?.competition_level || 'High'"></div>
+                            <div class="text-sm text-slate-400">Competition</div>
+                        </div>
+                        <div class="report-metric p-6 rounded-2xl text-center">
+                            <div class="text-3xl font-bold text-purple-500 mb-2" x-text="reportData?.analysis?.time_to_market || '6-9mo'"></div>
+                            <div class="text-sm text-slate-400">Time to Market</div>
+                        </div>
+                    </div>
+
+                    <!-- Report Sections -->
+                    <div class="grid lg:grid-cols-2 gap-8 mb-16" x-show="reportData && reportData.analysis">
+                        
+                        <!-- Market Analysis -->
+                        <div class="report-section glass-card p-8 rounded-2xl">
+                            <h3 class="text-2xl font-bold text-primary-500 mb-6 flex items-center">
+                                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                                TAM-SAM-SOM Analysis
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                                    <h4 class="font-semibold text-slate-200 mb-2">Total Addressable Market</h4>
+                                    <p class="text-slate-400 text-sm" x-text="reportData?.analysis?.market_analysis?.tam ?? 'N/A'"></p>
+                                </div>
+                                
+                                <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                                    <h4 class="font-semibold text-slate-200 mb-2">Serviceable Addressable Market</h4>
+                                    <p class="text-slate-400 text-sm" x-text="reportData?.analysis?.market_analysis?.sam ?? 'N/A'"></p>
+                                </div>
+                                
+                                <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                                    <h4 class="font-semibold text-slate-200 mb-2">Serviceable Obtainable Market</h4>
+                                    <p class="text-slate-400 text-sm" x-text="reportData?.analysis?.market_analysis?.som ?? 'N/A'"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- YC Criteria Assessment -->
+                        <div class="report-section glass-card p-8 rounded-2xl">
+                            <h3 class="text-2xl font-bold text-accent-500 mb-6 flex items-center">
+                                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Y Combinator Assessment
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                    <span class="text-slate-300">Problem Clarity</span>
+                                    <span class="text-success-500 font-semibold" x-text="(reportData?.analysis?.yc_criteria_assessment?.problem_clarity ?? 'N/A') + '/10'"></span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                    <span class="text-slate-300">Solution Fit</span>
+                                    <span class="text-primary-500 font-semibold" x-text="(reportData?.analysis?.yc_criteria_assessment?.solution_fit ?? 'N/A') + '/10'"></span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                    <span class="text-slate-300">Market Size</span>
+                                    <span class="text-accent-500 font-semibold" x-text="(reportData?.analysis?.yc_criteria_assessment?.market_size ?? 'N/A') + '/10'"></span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                    <span class="text-slate-300">Founder Strength</span>
+                                    <span class="text-purple-500 font-semibold" x-text="(reportData?.analysis?.yc_criteria_assessment?.founder_strength ?? 'N/A') + '/10'"></span>
+                                </div>
+                                <div class="p-4 bg-primary-900/20 rounded-lg border border-primary-500/30 mt-4">
+                                    <h4 class="font-semibold text-primary-300 mb-2">Overall YC Score</h4>
+                                    <div class="text-2xl font-bold text-primary-400" x-text="(reportData?.analysis?.yc_criteria_assessment?.overall_score ?? 'N/A') + '/10'"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Founder-Market Fit -->
+                        <div class="report-section glass-card p-8 rounded-2xl">
+                            <h3 class="text-2xl font-bold text-success-500 mb-6 flex items-center">
+                                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                Founder-Market Fit
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <div class="p-4 bg-success-900/20 rounded-lg border border-success-500/30">
+                                    <h4 class="font-semibold text-success-300 mb-2">Fit Score: <span x-text="(reportData?.analysis?.founder_market_fit?.score ?? 'N/A') + '/10'"></span></h4>
+                                </div>
+                                
+                                <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                                    <h4 class="font-semibold text-slate-200 mb-2">Key Strengths</h4>
+                                    <ul class="text-slate-400 text-sm space-y-1">
+                                        <template x-for="strength in reportData?.analysis?.founder_market_fit?.strengths ?? []" :key="strength">
+                                            <li x-text="'• ' + strength"></li>
+                                        </template>
+                                    </ul>
+                                </div>
+                                
+                                <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                                    <h4 class="font-semibold text-slate-200 mb-2">Development Areas</h4>
+                                    <ul class="text-slate-400 text-sm space-y-1">
+                                        <template x-for="gap in reportData?.analysis?.founder_market_fit?.gaps ?? []" :key="gap">
+                                            <li x-text="'• ' + gap"></li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Risk Assessment -->
+                        <div class="report-section glass-card p-8 rounded-2xl">
+                            <h3 class="text-2xl font-bold text-yellow-500 mb-6 flex items-center">
+                                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                                Risk Assessment
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <div class="p-4 bg-red-900/20 rounded-lg border border-red-500/30">
+                                    <h4 class="font-semibold text-red-300 mb-2">High Risk</h4>
+                                    <ul class="text-slate-400 text-sm space-y-1">
+                                        <template x-for="risk in reportData?.analysis?.risk_assessment?.high_risks ?? []" :key="risk">
+                                            <li x-text="'• ' + risk"></li>
+                                        </template>
+                                    </ul>
+                                </div>
+                                
+                                <div class="p-4 bg-yellow-900/20 rounded-lg border border-yellow-500/30">
+                                    <h4 class="font-semibold text-yellow-300 mb-2">Medium Risk</h4>
+                                    <ul class="text-slate-400 text-sm space-y-1">
+                                        <template x-for="risk in reportData?.analysis?.risk_assessment?.medium_risks ?? []" :key="risk">
+                                            <li x-text="'• ' + risk"></li>
+                                        </template>
+                                    </ul>
+                                </div>
+                                
+                                <div class="p-4 bg-green-900/20 rounded-lg border border-green-500/30">
+                                    <h4 class="font-semibold text-green-300 mb-2">Low Risk</h4>
+                                    <ul class="text-slate-400 text-sm space-y-1">
+                                        <template x-for="risk in reportData?.analysis?.risk_assessment?.low_risks ?? []" :key="risk">
+                                            <li x-text="'• ' + risk"></li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Strategic Recommendations -->
+                    <div class="glass-card p-8 rounded-2xl mb-16" x-show="reportData && reportData.analysis">
+                        <h3 class="text-2xl font-bold text-gradient mb-8 text-center">Strategic Recommendations</h3>
+                        
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-200 mb-4">MVP Strategy</h4>
+                                <p class="text-slate-400 text-sm mb-6" x-text="reportData?.analysis?.recommendations?.mvp_strategy ?? 'N/A'"></p>
+                                
+                                <h4 class="text-lg font-semibold text-slate-200 mb-4">Funding Requirements</h4>
+                                <p class="text-slate-400 text-sm" x-text="reportData?.analysis?.recommendations?.funding_needs ?? 'N/A'"></p>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-200 mb-4">Key Success Metrics</h4>
+                                <ul class="text-slate-400 text-sm space-y-2">
+                                    <template x-for="metric in reportData?.analysis?.recommendations?.success_metrics ?? []" :key="metric">
+                                        <li x-text="'• ' + metric"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Plan -->
+                    <div class="glass-card p-8 rounded-2xl mb-16" x-show="reportData && reportData.analysis">
+                        <h3 class="text-2xl font-bold text-gradient mb-8 text-center">Recommended Action Plan</h3>
+                        
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gradient-to-r from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-white font-bold text-xl">1</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-primary-400 mb-3" x-text="reportData?.analysis?.action_plan?.phase_1?.title ?? 'N/A'"></h4>
+                                <p class="text-sm text-slate-500 mb-3" x-text="reportData?.analysis?.action_plan?.phase_1?.timeline ?? 'N/A'"></p>
+                                <ul class="text-slate-400 text-sm space-y-2 text-left">
+                                    <template x-for="task in reportData?.analysis?.action_plan?.phase_1?.tasks ?? []" :key="task">
+                                        <li x-text="'• ' + task"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                            
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gradient-to-r from-accent-500 to-accent-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-white font-bold text-xl">2</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-accent-400 mb-3" x-text="reportData?.analysis?.action_plan?.phase_2?.title ?? 'N/A'"></h4>
+                                <p class="text-sm text-slate-500 mb-3" x-text="reportData?.analysis?.action_plan?.phase_2?.timeline ?? 'N/A'"></p>
+                                <ul class="text-slate-400 text-sm space-y-2 text-left">
+                                    <template x-for="task in reportData?.analysis?.action_plan?.phase_2?.tasks ?? []" :key="task">
+                                        <li x-text="'• ' + task"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                            
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gradient-to-r from-success-500 to-success-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-white font-bold text-xl">3</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-success-400 mb-3" x-text="reportData?.analysis?.action_plan?.phase_3?.title ?? 'N/A'"></h4>
+                                <p class="text-sm text-slate-500 mb-3" x-text="reportData?.analysis?.action_plan?.phase_3?.timeline ?? 'N/A'"></p>
+                                <ul class="text-slate-400 text-sm space-y-2 text-left">
+                                    <template x-for="task in reportData?.analysis?.action_plan?.phase_3?.tasks ?? []" :key="task">
+                                        <li x-text="'• ' + task"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Projections -->
+                    <div class="glass-card p-8 rounded-2xl" x-show="reportData && reportData.analysis">
+                        <h3 class="text-2xl font-bold text-gradient mb-8">Financial Projections (Year 1)</h3>
+                        
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-200 mb-4">Revenue Model</h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                        <span class="text-slate-300">Revenue Model</span>
+                                        <span class="text-success-500 font-semibold" x-text="reportData?.analysis?.financial_projections?.revenue_model ?? 'N/A'"></span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                        <span class="text-slate-300">Average booking value</span>
+                                        <span class="text-success-500 font-semibold" x-text="reportData?.analysis?.financial_projections?.avg_booking_value ?? 'N/A'"></span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                        <span class="text-slate-300">Projected monthly bookings (Month 12)</span>
+                                        <span class="text-success-500 font-semibold" x-text="reportData?.analysis?.financial_projections?.monthly_bookings_y1 ?? 'N/A'"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-200 mb-4">Key Metrics Target</h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                        <span class="text-slate-300">Monthly Recurring Revenue</span>
+                                        <span class="text-primary-500 font-semibold" x-text="reportData?.analysis?.financial_projections?.projected_mrr_y1 ?? 'N/A'"></span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                        <span class="text-slate-300">Customer Acquisition Cost</span>
+                                        <span class="text-accent-500 font-semibold" x-text="reportData?.analysis?.financial_projections?.customer_acquisition_cost ?? 'N/A'"></span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                        <span class="text-slate-300">Customer Lifetime Value</span>
+                                        <span class="text-purple-500 font-semibold" x-text="reportData?.analysis?.financial_projections?.customer_lifetime_value ?? 'N/A'"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-700 py-12 px-6 text-center">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex items-center justify-center space-x-3 mb-6">
+                <div class="w-8 h-8 bg-gradient-to-r from-primary-500 to-accent-500 rounded-lg"></div>
+                <span class="text-xl font-bold text-gradient">IdeaVisor</span>
+            </div>
+            <p class="text-slate-400 mb-6">Empowering entrepreneurs with AI-driven startup validation</p>
+            <div class="flex justify-center space-x-8 text-sm text-slate-500">
+                <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                <a href="#" class="hover:text-white transition-colors">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>                                
