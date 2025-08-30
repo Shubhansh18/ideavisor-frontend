@@ -28,6 +28,16 @@
     <!-- Canonical Tag -->
     <link rel="canonical" href="https://ideavisor.cotravels.in/">
 
+    <!-- Structured Data for Logo -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://ideavisor.cotravels.in/",
+      "logo": "https://ideavisor.cotravels.in/favicon.ico"
+    }
+    </script>
+
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon"> <!-- Favicon -->
 
@@ -549,9 +559,9 @@ Competition Level: ${analysis.competition_level}
 Time to Market: ${analysis.time_to_market}
 
 === MARKET ANALYSIS ===
-TAM (Total Addressable Market): ${analysis.market_analysis?.TAM || 'N/A'}
-SAM (Serviceable Addressable Market): ${analysis.market_analysis?.SAM || 'N/A'}
-SOM (Serviceable Obtainable Market): ${analysis.market_analysis?.SOM || 'N/A'}
+TAM (Total Addressable Market): ${analysis.market_analysis?.tam || 'N/A'}
+SAM (Serviceable Addressable Market): ${analysis.market_analysis?.sam || 'N/A'}
+SOM (Serviceable Obtainable Market): ${analysis.market_analysis?.som || 'N/A'}
 Growth Rate: ${analysis.market_analysis?.growth_rate || 'N/A'}
 
 Key Market Trends:
